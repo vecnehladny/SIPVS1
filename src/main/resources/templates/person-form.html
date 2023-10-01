@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Person Form</title>
+
+    <style>
+        *, ::after, ::before {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            text-align: left;
+            background-color: #f8f9fa;
+            padding-top: 70px;
+        }
+
+        .container, .container-fluid {
+            width: 980px;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .container-fluid {
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-success {
+            color: #fff;
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-danger {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn:not(:disabled):not(.disabled) {
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            color: #fff;
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+
+        .btn-success:hover {
+            color: #fff;
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-danger:hover {
+            color: #fff;
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+        .btn:focus, .btn:hover {
+            text-decoration: none;
+        }
+
+        .alert, .alert-toast {
+            --bs-alert-bg: transparent;
+            --bs-alert-padding-x: 1rem;
+            --bs-alert-padding-y: 1rem;
+            --bs-alert-margin-bottom: 1rem;
+            --bs-alert-color: inherit;
+            --bs-alert-border-color: transparent;
+            --bs-alert-border: 1px solid var(--bs-alert-border-color);
+            --bs-alert-border-radius: 0.375rem;
+            --bs-alert-link-color: inherit;
+            position: relative;
+            padding: var(--bs-alert-padding-y) var(--bs-alert-padding-x);
+            margin-bottom: var(--bs-alert-margin-bottom);
+            color: var(--bs-alert-color);
+            background-color: var(--bs-alert-bg);
+            border: var(--bs-alert-border);
+            border-radius: var(--bs-alert-border-radius);
+            margin-top: 0.5rem;
+        }
+
+        .alert-toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            width: 25vw;
+        }
+
+        .alert-success {
+            --bs-alert-color: #0a3622;
+            --bs-alert-bg: #d1e7dd;
+            --bs-alert-border-color: #a3cfbb;
+            --bs-alert-link-color: #0a3622;
+        }
+
+        .alert-danger {
+            --bs-alert-color: #58151c;
+            --bs-alert-bg: #f8d7da;
+            --bs-alert-border-color: #f1aeb5;
+            --bs-alert-link-color: #58151c;
+        }
+
+        .alert-warning {
+            --bs-alert-color: #664d03;
+            --bs-alert-bg: #fff3cd;
+            --bs-alert-border-color: #ffe69c;
+            --bs-alert-link-color: #664d03;
+        }
+
+        .me-2 {
+            margin-right: 0.5rem !important;
+        }
+
+        .d-flex {
+            display: -webkit-box !important;
+            display: -ms-flexbox !important;
+            display: flex !important;
+        }
+
+        .justify-content-between {
+            -webkit-box-pack: justify !important;
+            -ms-flex-pack: justify !important;
+            justify-content: space-between !important;
+        }
+
+        .align-items-center {
+            -webkit-box-align: center !important;
+            -ms-flex-align: center !important;
+            align-items: center !important;
+        }
+
+        .card {
+            -bs-card-spacer-y: 1rem;
+            --bs-card-spacer-x: 1rem;
+            --bs-card-title-spacer-y: 0.5rem;
+            --bs-card-title-color: ;
+            --bs-card-subtitle-color: ;
+            --bs-card-border-width: 1px;
+            --bs-card-border-color: rgba(0, 0, 0, 0.175);
+            --bs-card-border-radius: 0.375rem;
+            --bs-card-box-shadow: ;
+            --bs-card-inner-border-radius: calc(0.375rem - 1px);
+            --bs-card-cap-padding-y: 0.5rem;
+            --bs-card-cap-padding-x: 1rem;
+            --bs-card-cap-bg: rgba(33, 37, 41, 0.03);
+            --bs-card-cap-color: ;
+            --bs-card-height: ;
+            --bs-card-color: ;
+            --bs-card-bg: #fff;
+            --bs-card-img-overlay-padding: 1rem;
+            --bs-card-group-margin: 0.75rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: var(--bs-card-height);
+            color: #212529;
+            word-wrap: break-word;
+            background-color: var(--bs-card-bg);
+            background-clip: border-box;
+            border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+            border-radius: var(--bs-card-border-radius);
+        }
+
+        .card-body {
+            flex: 1 1 auto;
+            padding: 1rem 1rem;
+            color: var(--bs-card-color);
+        }
+        .w-100 {
+            width: 100% !important;
+        }
+    </style>
+</head>
+<body class="container">
+<div id="alerts" class="alerts">
+    <div th:class="'alert-toast alert-' + ${alert.type}" th:each="alert : ${alerts}">
+        <p th:text="${alert.message}"></p>
+        <p th:text="${alert.exception}"></p>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <h1>Form</h1>
+        <form th:action="@{/}" th:object="${person}" method="post">
+            <!-- Input fields for person -->
+            <div class="form-group">
+                <label for="personID">Person ID</label>
+                <input class="form-control" type="text" id="personID" name="personID" th:field="*{personID}"/>
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('personID')}" th:errors="*{personID}"></div>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input class="form-control" type="text" id="name" name="name" th:field="*{name}"/>
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+            </div>
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input class="form-control" type="number" id="age" name="age" th:field="*{age}"/>
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input class="form-control" type="email" id="email" name="email" th:field="*{email}"/>
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+            <div class="form-group">
+                <label for="birthDate">Birth Date</label>
+                <input class="form-control" type="date" id="birthDate" name="birthDate" th:field="*{birthDate}"/>
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"></div>
+            </div>
+
+            <!-- Input fields for child (as a list) -->
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1>List of Children</h1>
+                    <button class="btn btn-success" id="addChild">+</button>
+                </div>
+                <div id="childrenWrapper">
+                    <div class="childRow" th:each="child, iterStat : *{children}" th:id="'child'+${iterStat.index + 1}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2>Child <span th:text="${iterStat.index + 1}"></span></h2>
+                            <button class="btn btn-danger" th:id="'removeChild'+${iterStat.index + 1}">x</button>
+                        </div>
+                        <div class="form-group">
+                            <label th:for="'childFirstName_' + ${iterStat.index}">First name</label>
+                            <input class="form-control" type="text" th:id="'childFirstName_' + ${iterStat.index}" th:name="'child[' + ${iterStat.index} + '].firstName'" th:field="*{children[__${iterStat.index}__].firstName}"/>
+                        </div>
+                        <div class="form-group">
+                            <label th:for="'childLastName_' + ${iterStat.index}">Last Name</label>
+                            <input class="form-control" type="text" th:id="'childLastName_' + ${iterStat.index}" th:name="'child[' + ${iterStat.index} + '].lastName'" th:field="*{children[__${iterStat.index}__].lastName}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="submit-form" type="submit" style="display: none;" formaction="/process/save-to-xml">Save to XML</button>
+
+        </form>
+
+        <form id="fileForm" action="/" method="post" enctype="multipart/form-data" onsubmit="selectFileAndSubmit(event)">
+            <input type="file" name="file" id="fileInput" style="display:none;"/>
+            <button id="submit-validate" style="display: none;" formaction="/process/validate-against-xsd">Validate XML against XSD</button>
+            <button id="submit-transform" style="display: none;" formaction="/process/transform-xml-to-html">Transform XML to HTML</button>
+        </form>
+        <div class="d-flex">
+            <label class="btn btn-primary me-2 w-100" for="submit-form" tabindex="0">Save to XML</label>
+            <label class="btn btn-primary me-2 w-100" for="submit-validate" tabindex="0">Validate XML against XSD</label>
+            <label class="btn btn-primary me-2 w-100" for="submit-transform" tabindex="0">Transform XML to HTML</label>
+        </div>
+
+    </div>
+</div>
+<script>
+    function selectFileAndSubmit(event) {
+        var fileInput = document.getElementById('fileInput');
+        var fileForm = document.getElementById('fileForm');
+        fileForm.setAttribute('action', event.submitter.getAttribute('formaction'));
+
+        event.preventDefault();
+        fileInput.click();
+        fileInput.addEventListener('change', function () {
+            if (fileInput.files[0]) {
+                document.getElementById('fileForm').submit();
+            }
+        });
+    }
+
+    function autoDeleteAlerts() {
+        var alerts = document.querySelectorAll("#alerts .alert-toast");
+        console.log(alerts);
+
+        alerts.forEach(function (alerts) {
+            setTimeout(function () {
+                alerts.remove();
+            }, 5000);
+        });
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        autoDeleteAlerts();
+        var wrapper = document.getElementById('childrenWrapper');
+        var addChildButton = document.getElementById('addChild');
+
+        addChildButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            var htmlString = '<div class="childRow" id="child$IDXS$">\n' +
+                '    <div class="d-flex justify-content-between align-items-center">\n' +
+                '        <h2>Child $IDXS$</h2>\n' +
+                '        <button class="btn btn-danger" id="removeChild$IDXS$">x</button>\n' +
+                '    </div>\n' +
+                '    <div class="form-group">\n' +
+                '        <label for="childFirstName_$IDX$">First name</label>\n' +
+                '        <input class="form-control" type="text" id="childFirstName_$IDX$" name="children[$IDX$].firstName" />\n' +
+                '    </div>\n' +
+                '    <div class="form-group">\n' +
+                '        <label for="childLastName_$IDX$">Last Name</label>\n' +
+                '        <input class="form-control" type="text" id="childLastName_$IDX$" name="children[$IDX$].lastName" />\n' +
+                '    </div>\n' +
+                '</div>';
+            var tempElement = document.createElement('div');
+            var childCount = wrapper.childElementCount;
+            tempElement.innerHTML = htmlString.replaceAll('$IDX$', String(childCount)).replaceAll('$IDXS$', String(childCount + 1));
+            wrapper.appendChild(tempElement.firstChild);
+
+            var elements = document.querySelectorAll('[id^="removeChild"]');
+
+            elements.forEach(function (element) {
+                element.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    var closestChildRow = element.closest('.childRow');
+                    if (closestChildRow) {
+                        closestChildRow.remove();
+                    }
+                });
+            });
+        });
+
+        var elements = document.querySelectorAll('[id^="removeChild"]');
+
+        elements.forEach(function (element) {
+            element.addEventListener('click', function (event) {
+                event.preventDefault();
+                var closestChildRow = element.closest('.childRow');
+                if (closestChildRow) {
+                    closestChildRow.remove();
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
