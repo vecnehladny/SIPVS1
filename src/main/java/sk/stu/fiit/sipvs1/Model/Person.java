@@ -3,6 +3,7 @@ package sk.stu.fiit.sipvs1.Model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JacksonXmlRootElement(namespace = "http://www.example.com")
 public class Person {
 
 
@@ -44,4 +46,7 @@ public class Person {
 
     @JacksonXmlElementWrapper(useWrapping=false)
     private List<Child> children;
+
+//    @JacksonXmlProperty(isAttribute = true)
+//    private final String xmlns = "http://example.com";
 }

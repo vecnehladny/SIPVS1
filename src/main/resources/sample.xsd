@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.com"
+           xmlns="http://www.example.com">
 
-  <xs:element name="Person" type="personType" />
-  <xs:attribute name="personID" type="personIDType" />
+    <xs:element name="Person" type="personType"/>
 
   <xs:complexType name="personType">
     <xs:sequence>
@@ -12,37 +12,37 @@
       <xs:element type="xs:date" name="birthDate" />
       <xs:element type="childType" name="children" maxOccurs="unbounded" minOccurs="0" />
     </xs:sequence>
-    <xs:attribute ref="personID" use="required" />
+    <xs:attribute name="personID" use="required" type="personIDType"/>
   </xs:complexType>
 
-  <xs:complexType name="childType">
-    <xs:sequence>
-      <xs:element type="xs:string" name="firstName" />
-      <xs:element type="xs:string" name="lastName" />
-    </xs:sequence>
-  </xs:complexType>
+    <xs:complexType name="childType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="firstName"/>
+            <xs:element type="xs:string" name="lastName"/>
+        </xs:sequence>
+    </xs:complexType>
 
-  <xs:simpleType name="personIDType">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="[a-zA-Z0-9]{8}" />
-    </xs:restriction>
-  </xs:simpleType>
+    <xs:simpleType name="personIDType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z0-9]{8}"/>
+        </xs:restriction>
+    </xs:simpleType>
 
-  <xs:simpleType name="NameType">
-    <xs:restriction base="xs:string">
-      <xs:minLength value="1" />
-      <xs:maxLength value="50" />
-    </xs:restriction>
-  </xs:simpleType>
+    <xs:simpleType name="NameType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
 
-  <xs:simpleType name="AgeType">
-    <xs:restriction base="xs:positiveInteger" />
-  </xs:simpleType>
+    <xs:simpleType name="AgeType">
+        <xs:restriction base="xs:positiveInteger"/>
+    </xs:simpleType>
 
-  <xs:simpleType name="EmailType">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}" />
-    </xs:restriction>
-  </xs:simpleType>
+    <xs:simpleType name="EmailType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}"/>
+        </xs:restriction>
+    </xs:simpleType>
 
 </xs:schema>
