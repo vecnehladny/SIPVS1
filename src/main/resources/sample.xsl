@@ -20,10 +20,11 @@
                     text-align: left;
                     background-color: #f8f9fa;
                     padding-top: 70px;
+                    padding-bottom: 70px;
                     }
 
                     .container, .container-fluid {
-                    width: 980px;
+                    max-width: 980px;
                     padding-right: 15px;
                     padding-left: 15px;
                     margin-right: auto;
@@ -233,7 +234,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h1>Form</h1>
-                            <xsl:apply-templates select="Person"/>
+                            <xsl:apply-templates select="//*[local-name()='Person']"/>
                         </div>
                     </div>
                 </div>
@@ -242,7 +243,7 @@
 
     </xsl:template>
 
-    <xsl:template match="Person">
+    <xsl:template match="//*[local-name()='Person']">
         <form>
             <div class="form-group">
                 <label for="personID">Person ID</label>

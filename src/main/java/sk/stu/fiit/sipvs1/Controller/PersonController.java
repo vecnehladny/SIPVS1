@@ -2,8 +2,10 @@ package sk.stu.fiit.sipvs1.Controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,9 +24,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,14 +47,17 @@ public class PersonController {
     PersonService personService;
 
     @GetMapping("/")
-    public String showPersonForm(Person person) {
+    public String showPersonForm(Person person, Model model) {
+        model.addAttribute("xsdFile", getSampleXsd());
+        model.addAttribute("xslFile", getSampleXsl());
+        model.addAttribute("pdfFile", getSamplePdf());
         return "person-form";
     }
 
     @PostMapping("/process/save-to-xml")
-    public String processPersonForm(@Valid Person person, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String processPersonForm(@Valid Person person, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()) {
-            return showPersonForm(person);
+            return showPersonForm(person, model);
         }
 
         redirectAttributes.addFlashAttribute("person", person);
@@ -140,5 +150,33 @@ public class PersonController {
                                                   .lastName("2")
                                                   .build()))
                      .build();
+    }
+
+    private String getSamplePdf() {
+        try {
+            byte[] file = Files.readAllBytes(Path.of("src/main/resources/sample.pdf"));
+            byte[] encoded = Base64.encodeBase64(file, false);
+            return new String(encoded, StandardCharsets.US_ASCII);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Failed to read sample pdf file");
+        }
+        return null;
+    }
+
+    private String getSampleXsl() {
+        return readFileToString("src/main/resources/sample.xsl");
+    }
+
+    private String getSampleXsd() {
+        return readFileToString("src/main/resources/sample.xsd");
+    }
+
+    private String readFileToString(String path) {
+        try {
+            return Files.readString(Path.of(path));
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Failed to read file " + path);
+        }
+        return null;
     }
 }
