@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sk.stu.fiit.sipvs1.Model.Child;
@@ -24,10 +21,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -130,7 +124,33 @@ public class PersonController {
             Files.copy(htmlFile.toPath(), out);
             out.flush();
         } catch (IOException | TransformerException e) {
-            LOGGER.log(Level.SEVERE, "Failed send a file", e);
+            LOGGER.log(Level.SEVERE, "Failed to send a file", e);
+        }
+    }
+
+    @PostMapping("/process/sign")
+    @ResponseBody
+    public void sign(String xadesSignature, HttpServletResponse response) {
+        File signatureFile = new File("xades_signature.xml");
+        if(null != signatureFile) {
+            try {
+                String mimeType = URLConnection.guessContentTypeFromName(signatureFile.getName());
+                String contentDisposition = String.format("attachment; filename=%s", signatureFile.getName());
+                int fileSize = Long.valueOf(signatureFile.length())
+                                   .intValue();
+                response.setContentType(mimeType);
+                response.setHeader("Content-Disposition", contentDisposition);
+                response.setContentLength(fileSize);
+                OutputStream out = response.getOutputStream();
+                FileWriter fw = new FileWriter(signatureFile.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(xadesSignature);
+                bw.close();
+                Files.copy(signatureFile.toPath(), out);
+                out.flush();
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Failed to send a file", e);
+            }
         }
     }
 

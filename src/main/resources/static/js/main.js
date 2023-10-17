@@ -86,6 +86,7 @@ function init() {
 function Callback(onSuccess) {
     this.onSuccess = onSuccess;
     this.onError = function (e) {
+        hideOverlay();
         if (ditec.utils.isDitecError(e)) {
             addAlert(e.code, e.message, "danger");
             console.log(e.detail);
@@ -112,16 +113,46 @@ function readFile(event) {
     return reader.readAsText(file)
 }
 
+function downloadSignature(ret) {
+    var url = "/process/sign";
+    var form = document.createElement('form');
+    form.action = url;
+    form.method = 'post';
+    form.style.display = 'none'
+
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.name = 'xadesSignature';
+    input.value = ret;
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function showOverlay() {
+    var overlay = document.getElementById('overlay');
+    overlay.style.display = 'block';
+}
+
+function hideOverlay() {
+    var overlay = document.getElementById('overlay');
+    overlay.style.display = 'none';
+}
+
 function signForm(xmlFile) {
     var xsdFile = document.getElementById('sign_xsdFile').value;
     var xslFile = document.getElementById('sign_xslFile').value;
     var pdfFile = document.getElementById('sign_pdfFile').value;
     ditec.dSigXadesJs.deploy(null, new Callback(function () {
         ditec.dSigXadesJs.initialize(new Callback(function () {
+            showOverlay();
             ditec.dSigXadesJs.addXmlObject2("form_id", "Form", xmlFile, xsdFile, "http://www.example.com", "http://www.w3.org/2001/XMLSchema", xslFile, "http://www.w3.org/1999/XSL/Transform", "HTML", new Callback(function () {
                 ditec.dSigXadesJs.addPdfObject("pdf_id", "PDF File", pdfFile, "", "http://example.com/objectFormatIdentifier", 2, false, new Callback(function () {
                     ditec.dSigXadesJs.sign20("signatureId", "http://www.w3.org/2001/04/xmlenc#sha256", "urn:oid:1.3.158.36061701.1.2.3", "dataEnvelopeId", "http://dataEnvelopeURI", "dataEnvelopeDescr", new Callback(function () {
                         ditec.dSigXadesJs.getSignedXmlWithEnvelope(new Callback(function (ret) {
+                            hideOverlay();
+                            downloadSignature(ret);
                             addAlert("", "Document was signed successfully", "success");
                             console.log(ret);
                         }));

@@ -14,6 +14,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="container">
+<div id="overlay" class="overlay"></div>
 <div id="alerts" class="alerts">
     <div th:class="'alert-toast alert-' + ${alert.type}" th:each="alert : ${alerts}">
         <p th:text="${alert.message}"></p>
