@@ -128,32 +128,6 @@ public class PersonController {
         }
     }
 
-    @PostMapping("/process/sign")
-    @ResponseBody
-    public void sign(String xadesSignature, HttpServletResponse response) {
-        File signatureFile = new File("xades_signature.xml");
-        if(null != signatureFile) {
-            try {
-                String mimeType = URLConnection.guessContentTypeFromName(signatureFile.getName());
-                String contentDisposition = String.format("attachment; filename=%s", signatureFile.getName());
-                int fileSize = Long.valueOf(signatureFile.length())
-                                   .intValue();
-                response.setContentType(mimeType);
-                response.setHeader("Content-Disposition", contentDisposition);
-                response.setContentLength(fileSize);
-                OutputStream out = response.getOutputStream();
-                FileWriter fw = new FileWriter(signatureFile.getAbsoluteFile());
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(xadesSignature);
-                bw.close();
-                Files.copy(signatureFile.toPath(), out);
-                out.flush();
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Failed to send a file", e);
-            }
-        }
-    }
-
     private Person getSamplePerson() {
         return Person.builder()
                      .personID("1")

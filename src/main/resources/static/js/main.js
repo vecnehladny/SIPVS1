@@ -114,20 +114,13 @@ function readFile(event) {
 }
 
 function downloadSignature(ret) {
-    var url = "/process/sign";
-    var form = document.createElement('form');
-    form.action = url;
-    form.method = 'post';
-    form.style.display = 'none'
-
-    var input = document.createElement('input');
-    input.type = 'text';
-    input.name = 'xadesSignature';
-    input.value = ret;
-
-    form.appendChild(input);
-    document.body.appendChild(form);
-    form.submit();
+    const blob = new Blob([ret], { type: 'application/xml' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "xades_signature.xml";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 function showOverlay() {
