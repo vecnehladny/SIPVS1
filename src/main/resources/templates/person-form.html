@@ -84,6 +84,7 @@
             <input type="file" name="file" id="fileInput" style="display:none;"/>
             <button id="submit-validate" style="display: none;" formaction="/process/validate-against-xsd">Validate XML against XSD</button>
             <button id="submit-transform" style="display: none;" formaction="/process/transform-xml-to-html">Transform XML to HTML</button>
+            <button id="submit-timestamp" style="display: none;" formaction="/process/timestamp-signature">Timestampt signature</button>
         </form>
     </div>
     <div class="card-footer d-flex">
@@ -91,6 +92,7 @@
         <label class="btn btn-primary me-2 w-100" for="submit-validate" tabindex="0">Validate XML against XSD</label>
         <label class="btn btn-primary me-2 w-100" for="submit-transform" tabindex="0">Transform XML to HTML</label>
         <button class="btn btn-primary me-2 w-100" id="submit-sign" onclick="document.getElementById('sign_xmlFile').click()">Sign</button>
+        <label class="btn btn-primary w-100" for="submit-timestamp" tabindex="0">Timestampt signature</label>
     </div>
 </div>
 
