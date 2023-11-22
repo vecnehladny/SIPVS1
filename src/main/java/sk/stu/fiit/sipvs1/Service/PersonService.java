@@ -40,7 +40,7 @@ public class PersonService {
 
     public static final Logger LOGGER = Logger.getLogger("PersonService");
     public static final String DEFAULT_FILE_NAME = "sample_file.xml";
-    public static final String SIGNATURE_START = "<ds:SignatureValue Id=\"signatureIdSignatureValue\" xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:xzep=\"http://www.ditec.sk/ep/signature_formats/xades_zep/v2.0\">";
+    public static final String SIGNATURE_START = "<ds:SignatureValue";
     public static final String SIGNATURE_END = "</ds:SignatureValue>";
 
     @Value("${tsa.url}")
@@ -208,11 +208,11 @@ public class PersonService {
 
     private byte[] calculateMessageDigest(String signatureFile) {
         String toStamp = signatureFile;
-        toStamp = toStamp.substring(toStamp.indexOf(SIGNATURE_START) + SIGNATURE_START.length());
-        toStamp = toStamp.substring(0, toStamp.indexOf(SIGNATURE_END));
+        toStamp = toStamp.substring(toStamp.indexOf(SIGNATURE_START));
+        toStamp = toStamp.substring(0, toStamp.indexOf(SIGNATURE_END) + SIGNATURE_END.length());
 
         SHA256Digest md = new SHA256Digest();
-        byte[] bytes = toStamp.getBytes();
+        byte[] bytes = Base64.decodeBase64(toStamp);
         String fileString = new String(bytes);
         byte[] dataBytes = fileString.getBytes();
         int nread = dataBytes.length;
