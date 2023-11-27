@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import sk.stu.fiit.sipvs1.Service.ValidatorService;
-import sk.stu.fiit.sipvs1.wrapper.XadesValidationResult;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -28,13 +27,6 @@ public class ValidatorController {
 
     @PostMapping("/validator/upload")
     public ResponseEntity<?> handleFileUpload(@RequestParam("files") List<MultipartFile> files) {
-
-        for (MultipartFile file : files) {
-            LOGGER.info("Received file: " + file.getOriginalFilename());
-        }
-
-        List<XadesValidationResult> results = validatorService.validateDocuments(files);
-
-        return ResponseEntity.ok(results);
+        return ResponseEntity.ok(validatorService.validateDocuments(files));
     }
 }

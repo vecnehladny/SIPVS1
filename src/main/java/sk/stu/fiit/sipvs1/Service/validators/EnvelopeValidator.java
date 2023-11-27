@@ -15,19 +15,27 @@ public class EnvelopeValidator {
     public static final String PREFIX_ER = "ENVELOPE | ERROR : ";
     public static final String PREFIX_OK = "ENVELOPE | OK : ";
 
-    public void verify(Document document) throws InvalidDocumentException{
+    public void validate(Document document) throws InvalidDocumentException{
         Element root = document.getDocumentElement();
 
         if (!ValidatorUtils.checkAttributeValueS(root, "xmlns:xzep", "http://www.ditec.sk/ep/signature_formats/xades_zep/v1.0")) {
-            throw new InvalidDocumentException(PREFIX_ER + "Root element must have attribute xmlns:xzep with value set=http://www.ditec.sk/ep/signature_formats/xades_zep/v1.0");
+            invalidateDocument("Root element must have attribute xmlns:xzep with value set=http://www.ditec.sk/ep/signature_formats/xades_zep/v1.0");
         }
 
-        LOGGER.info(PREFIX_OK + "xmlns:xzep");
+        logOk("xmlns:xzep");
 
         if (!ValidatorUtils.checkAttributeValue(root, "xmlns:ds", "http://www.w3.org/2000/09/xmldsig#")) {
-            throw new InvalidDocumentException(PREFIX_ER + "ENVELOPE VALIDATION | ERROR : Root element must have attribute xmlns:ds with value set=http://www.w3.org/2000/09/xmldsig#");
+            invalidateDocument("ENVELOPE VALIDATION | ERROR : Root element must have attribute xmlns:ds with value set=http://www.w3.org/2000/09/xmldsig#");
         }
 
-        LOGGER.info( PREFIX_OK + "xmlns:ds");
+        logOk("xmlns:ds");
+    }
+
+    private void logOk(String x) {
+        LOGGER.info(PREFIX_OK + x);
+    }
+
+    private void invalidateDocument(String s) throws InvalidDocumentException {
+        throw new InvalidDocumentException(PREFIX_ER + s);
     }
 }

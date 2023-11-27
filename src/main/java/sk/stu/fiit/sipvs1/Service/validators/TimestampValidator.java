@@ -29,23 +29,23 @@ public class TimestampValidator {
     public static final String PREFIX_ER = "TIMESTAMP | ERROR : ";
     public static final String PREFIX_OK = "TIMESTAMP | OK : ";
 
-    public void verify(Document document) throws InvalidDocumentException {
+    public void validate(Document document) throws InvalidDocumentException {
         X509CRL crl = ValidatorUtils.getCRL();
         TimeStampToken token = ValidatorUtils.getTimestampToken(document);
         verifyTimestampCerfificate(crl, token);
         verifyMessageImprint(token, document);
-        LOGGER.info(PREFIX_OK + "References ds:Manifest");
+        logOk("References ds:Manifest");
     }
 
 
-    private void verifyTimestampCerfificate(X509CRL crl, TimeStampToken ts_token) throws InvalidDocumentException {
+    private void verifyTimestampCerfificate(X509CRL crl, TimeStampToken tsToken) throws InvalidDocumentException {
         X509CertificateHolder signer = null;
-        Store<X509CertificateHolder> certHolders = ts_token.getCertificates();
+        Store<X509CertificateHolder> certHolders = tsToken.getCertificates();
         ArrayList<X509CertificateHolder> certList = new ArrayList<>(certHolders.getMatches(null));
-        BigInteger serialNumToken = ts_token.getSID()
-                                            .getSerialNumber();
-        X500Name issuerToken = ts_token.getSID()
-                                       .getIssuer();
+        BigInteger serialNumToken = tsToken.getSID()
+                                           .getSerialNumber();
+        X500Name issuerToken = tsToken.getSID()
+                                      .getIssuer();
 
         for (X509CertificateHolder certHolder : certList) {
             if (certHolder.getSerialNumber()
@@ -57,35 +57,35 @@ public class TimestampValidator {
         }
 
         if (null == signer) {
-            throw new InvalidDocumentException(PREFIX_ER + "Signed certificate of TS is not found in document");
+            invalidateDocument("Signed certificate of TS is not found in document");
         }
 
         if (!signer.isValidOn(new Date())) {
-            throw new InvalidDocumentException(PREFIX_ER + "Signed certificate of TS is not valid compared to current time");
+            invalidateDocument("Signed certificate of TS is not valid compared to current time");
         }
 
-        LOGGER.info(PREFIX_OK + "TS compared to UTC NOW");
+        logOk("TS compared to UTC NOW");
 
         if (null != crl.getRevokedCertificate(signer.getSerialNumber())) {
-            throw new InvalidDocumentException(PREFIX_ER + "Signed certificate of TS is not valid compared to last valid CRL");
+            invalidateDocument("Signed certificate of TS is not valid compared to last valid CRL");
         }
 
-        LOGGER.info(PREFIX_OK + "TS compared to last valid CRL");
+        logOk("TS compared to last valid CRL");
 
     }
 
 
-    private void verifyMessageImprint(TimeStampToken ts_token, Document document) throws InvalidDocumentException {
-        byte[] messageImprint = ts_token.getTimeStampInfo()
-                                        .getMessageImprintDigest();
-        String hashAlg = ts_token.getTimeStampInfo()
-                                 .getHashAlgorithm()
-                                 .getAlgorithm()
-                                 .getId();
+    private void verifyMessageImprint(TimeStampToken tsToken, Document document) throws InvalidDocumentException {
+        byte[] messageImprint = tsToken.getTimeStampInfo()
+                                       .getMessageImprintDigest();
+        String hashAlg = tsToken.getTimeStampInfo()
+                                .getHashAlgorithm()
+                                .getAlgorithm()
+                                .getId();
         Node signatureValueNode = XPathUtils.selectSingleNode(document, "//ds:Signature/ds:SignatureValue");
 
         if (signatureValueNode == null) {
-            throw new InvalidDocumentException(PREFIX_ER + "Element ds:SignatureValue not found");
+            invalidateDocument("Element ds:SignatureValue not found");
         }
 
         byte[] signatureValue = Base64.decode(signatureValueNode.getTextContent()
@@ -95,13 +95,25 @@ public class TimestampValidator {
         try {
             messageDigest = MessageDigest.getInstance(hashAlg, "BC");
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            throw new InvalidDocumentException(PREFIX_ER + "Not supported algorithm in message digest", e);
+            invalidateDocument("Not supported algorithm in message digest", e);
         }
 
         if (!Arrays.equals(messageImprint, messageDigest.digest(signatureValue))) {
-            throw new InvalidDocumentException(PREFIX_ER + "MessageImprint from TS and signature ds:SignatureValue does not match");
+            invalidateDocument("MessageImprint from TS and signature ds:SignatureValue does not match");
         }
 
-        LOGGER.info(PREFIX_OK + "MessageImprint from TS compared to ds:SignatureValue");
+        logOk("MessageImprint from TS compared to ds:SignatureValue");
+    }
+
+    private void logOk(String x) {
+        LOGGER.info(PREFIX_OK + x);
+    }
+
+    private void invalidateDocument(String s) throws InvalidDocumentException {
+        throw new InvalidDocumentException(PREFIX_ER + s);
+    }
+
+    private void invalidateDocument(String s, Exception e) throws InvalidDocumentException {
+        throw new InvalidDocumentException(PREFIX_ER + s, e);
     }
 }

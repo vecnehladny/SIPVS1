@@ -40,6 +40,7 @@ public class ValidatorConstants {
 
 
     public static final Map<String, String> REFERENCES;
+    public static final String DANGER = "danger";
 
     // BOD 4.3.1
     static {
@@ -82,4 +83,9 @@ public class ValidatorConstants {
                           "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512",
                           "SHA512withRSA");
     }
+
+    public static final String ALGORITHM = "Algorithm";
+    public static final String DS_TRANSFORM = "ds:Transform";
+    public static final String DS_SIGNATURE = "ds:Signature";
+    public static final String DS_DIGEST_METHOD = "ds:DigestMethod";
 }

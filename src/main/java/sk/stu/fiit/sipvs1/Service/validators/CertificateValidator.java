@@ -20,7 +20,7 @@ public class CertificateValidator {
     public static final String PREFIX_ER = "CERTIFICATE | ERROR : ";
     public static final String PREFIX_OK = "CERTIFICATE | OK : ";
 
-    public void verify(Document document) throws InvalidDocumentException {
+    public void validate(Document document) throws InvalidDocumentException {
         X509CRL crl = ValidatorUtils.getCRL();
         TimeStampToken timeStampToken = ValidatorUtils.getTimestampToken(document);
         X509CertificateObject certificateObject = ValidatorUtils.getCertificate(document);
@@ -29,18 +29,30 @@ public class CertificateValidator {
             certificateObject.checkValidity(timeStampToken.getTimeStampInfo()
                                                           .getGenTime());
         } catch (CertificateExpiredException e) {
-            throw new InvalidDocumentException(PREFIX_ER + "The certificate was expired at the time of signing", e);
+            invalidateDocument("The certificate was expired at the time of signing", e);
         } catch (CertificateNotYetValidException e) {
-            throw new InvalidDocumentException(PREFIX_ER + "The certificate was not yet valid at the time of signing", e);
+            invalidateDocument("The certificate was not yet valid at the time of signing", e);
         }
 
         X509CRLEntry entry = crl.getRevokedCertificate(certificateObject.getSerialNumber());
         if (entry != null && timeStampToken.getTimeStampInfo()
                                            .getGenTime()
                                            .after(entry.getRevocationDate())) {
-            throw new InvalidDocumentException(PREFIX_ER + "The certificate was revoked at the time of signing");
+            invalidateDocument("The certificate was revoked at the time of signing");
         }
 
-        LOGGER.info(PREFIX_OK);
+        logOk("");
+    }
+
+    private void logOk(String x) {
+        LOGGER.info(PREFIX_OK + x);
+    }
+
+    private void invalidateDocument(String s) throws InvalidDocumentException {
+        throw new InvalidDocumentException(PREFIX_ER + s);
+    }
+
+    private void invalidateDocument(String s, Exception e) throws InvalidDocumentException {
+        throw new InvalidDocumentException(PREFIX_ER + s, e);
     }
 }

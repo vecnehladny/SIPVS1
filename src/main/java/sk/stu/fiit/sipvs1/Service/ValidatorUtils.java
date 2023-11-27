@@ -30,30 +30,24 @@ public class ValidatorUtils {
     public static final Logger LOGGER = Logger.getLogger("ValidatorService");
 
     public static boolean checkAttributeValue(Element element, String attribute, String expectedValue) {
-        String actualValue = element.getAttribute(attribute);
-
-        return actualValue.equals(expectedValue);
+        return element.getAttribute(attribute).equals(expectedValue);
     }
 
     public static boolean checkAttributeValueS(Element element, String attribute, String expectedValue) {
-        String actualValue = element.getAttribute(attribute);
-
-        return actualValue.startsWith(expectedValue);
+        return element.getAttribute(attribute).startsWith(expectedValue);
     }
 
-    public static boolean checkAttributeValue(Element element, String attribute, List<String> expectedValues) {
+    public static boolean checkAttributeValueNot(Element element, String attribute, List<String> expectedValues) {
         for (String expectedValue : expectedValues) {
             if (checkAttributeValue(element, attribute, expectedValue)) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
-    public static boolean checkAttributeValue(Element element, String attribute) {
-        String actualValue = element.getAttribute(attribute);
-
-        return !actualValue.isEmpty();
+    public static boolean checkAttributeValueNot(Element element, String attribute) {
+        return element.getAttribute(attribute).isEmpty();
     }
 
 
@@ -80,7 +74,7 @@ public class ValidatorUtils {
             throw new InvalidDocumentException("Document does not contain an element ds:X509Certificate");
         }
 
-        X509CertificateObject certObject = null;
+        X509CertificateObject certObject;
 
         try (ASN1InputStream inputStream = new ASN1InputStream(new ByteArrayInputStream(Base64.decode(x509Certificate.getTextContent())))) {
             ASN1Sequence sequence = (ASN1Sequence) inputStream.readObject();

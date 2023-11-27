@@ -48,14 +48,6 @@ public class XPathUtils {
     }
 
     public static Node selectSingleNode(Element element, String xpathExpr) {
-//        try {
-//            XPath xpath = new Dom4jXPath(xpathExpr);
-//            xpath.setNamespaceContext(new SimpleNamespaceContext(NS_MAP));
-//            return (Node) xpath.selectSingleNode(element);
-//        } catch (JaxenException e) {
-//            LOGGER.log(Level.SEVERE, "", e);
-//        }
-
         try {
             XPath xPath = XPathFactory.newInstance().newXPath();
             xPath.setNamespaceContext(NAMESPACE_CONTEXT);
@@ -109,13 +101,6 @@ public class XPathUtils {
     }
 
     public static Element selectSingleElement(Element element, String xpathExpr) {
-//        try {
-//            XPath xpath = new Dom4jXPath(xpathExpr);
-//            xpath.setNamespaceContext(new SimpleNamespaceContext(NS_MAP));
-//            return (Element) xpath.selectSingleNode(element);
-//        } catch (JaxenException e) {
-//            LOGGER.log(Level.SEVERE, "", e);
-//        }
         try {
             XPath xPath = XPathFactory.newInstance().newXPath();
             xPath.setNamespaceContext(NAMESPACE_CONTEXT);
@@ -161,13 +146,6 @@ public class XPathUtils {
     }
 
     public static List<Node> selectNodeList(Element element, String xpathExpr) {
-//        try {
-//            XPath xpath = new Dom4jXPath(xpathExpr);
-//            xpath.setNamespaceContext(new SimpleNamespaceContext(NS_MAP));
-//            return xpath.selectNodes(element);
-//        } catch (JaxenException e) {
-//            LOGGER.log(Level.SEVERE, "", e);
-//        }
         try {
             XPath xPath = XPathFactory.newInstance().newXPath();
             xPath.setNamespaceContext(NAMESPACE_CONTEXT);
