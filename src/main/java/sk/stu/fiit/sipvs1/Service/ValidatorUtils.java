@@ -34,7 +34,7 @@ public class ValidatorUtils {
     }
 
     public static boolean checkAttributeValueS(Element element, String attribute, String expectedValue) {
-        return element.getAttribute(attribute).startsWith(expectedValue);
+        return element.getAttribute(attribute).equals(expectedValue);
     }
 
     public static boolean checkAttributeValueNot(Element element, String attribute, List<String> expectedValues) {
